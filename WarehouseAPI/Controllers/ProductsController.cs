@@ -22,7 +22,8 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
     {
-        return await _context.Products.ToListAsync();
+        var products = await _context.Products.ToListAsync();
+        return Ok(products);
     }
 
     [HttpGet("{id}")]
@@ -33,10 +34,10 @@ public class ProductsController : ControllerBase
 
         if (product == null)
         {
-            return NotFound();
+            return NotFound(new { error = "Product not found." });
         }
 
-        return product;
+        return Ok(product);
     }
 
     [HttpPost]
@@ -44,7 +45,7 @@ public class ProductsController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(newproduct.PName) || string.IsNullOrWhiteSpace(newproduct.Description) || newproduct.CompanyID <= 0 || newproduct.CategoryID <= 0 || newproduct.Quantity <= 0 || newproduct.Price <= 0)
         {
-            return BadRequest("All fields are required and must be valid (non-empty, non-zero, and non-negative).");
+            return BadRequest(new { error = "All fields are required and must be valid (non-empty, non-zero, and non-negative)." });
         }
 
         var product = new Product
@@ -71,13 +72,13 @@ public class ProductsController : ControllerBase
 
         if (product == null)
         {
-            return NotFound();
+            return NotFound(new { error = "Product not found." });
         }
 
         _context.Products.Remove(product);
         await _context.SaveChangesAsync();
 
-        return NoContent();
+        return Ok(new { message = "Product deleted successfully." });
     }
 
     [HttpPut("{id}")]
@@ -87,7 +88,7 @@ public class ProductsController : ControllerBase
 
         if (existingProduct == null)
         {
-            return NotFound();
+            return NotFound(new { error = "Product not found." });
         }
 
         existingProduct.PName = updatedProduct.PName;
@@ -99,7 +100,7 @@ public class ProductsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
-        return NoContent();
+        return Ok(new { message = "Product updated successfully." });
     }
 
     [HttpGet("GetProductJOINS")]
@@ -140,7 +141,7 @@ public class ProductsController : ControllerBase
 
         if (result == null)
         {
-            return NotFound();
+            return NotFound(new { error = "Product not found." });
         }
 
         return Ok(result);

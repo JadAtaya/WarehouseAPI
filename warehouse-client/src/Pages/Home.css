@@ -1,0 +1,86 @@
+/* Home.css */
+
+body {
+    background-color: #78b800;
+    background-image: url("https://www.transparenttextures.com/patterns/brick-wall-dark.png");
+  }
+
+.home-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.home-nav {
+  width: 220px;
+  background-color: #78b800;
+  background-image: url("https://www.transparenttextures.com/patterns/brick-wall.png");
+  border-right: 1px solid #e2e8f0;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.home-user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.home-user-pfp {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.home-user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-user-welcome {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.15rem;
+}
+
+.home-user-name {
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: #222;
+}
+
+.home-nav button {
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  background: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.home-nav button:hover {
+  background: #cbd5e1;
+}
+
+.home-main {
+  flex: 1;
+  padding: 3rem;
+  text-align: center;
+  color: #222;
+  background-color: #78b800;
+  background-image: url("https://www.transparenttextures.com/patterns/brick-wall-dark.png");
+  /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+}
+

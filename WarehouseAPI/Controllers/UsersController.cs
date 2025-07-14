@@ -29,7 +29,31 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Users>>> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        
+        var users = await _context.Users.ToListAsync();
+        return Ok(users);
+    }
+
+    [HttpGet("GetSingleUser/{Email}")]
+    public async Task<ActionResult<GetSingleUser>> GetSingleUser(string Email)
+    {
+        var user = await _context.Users
+            .Where(u => u.Email == Email)
+            .Select(u => new GetSingleUser
+            {
+                UserID = u.UserID,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email
+            })
+            .FirstOrDefaultAsync();
+
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found." });
+        }
+
+        return Ok(user);
     }
 
     [HttpGet("CheckEmail")]
@@ -37,17 +61,17 @@ public class UsersController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(Email))
         {
-            return BadRequest("Email is required.");
+            return BadRequest(new { error = "Email is required." });
         }
 
         if (!Email.Contains("@"))
         {
-            return BadRequest("Invalid email address");
+            return BadRequest(new { error = "Invalid email address" });
         }
 
         bool exists = await _context.Users.AnyAsync(u => u.Email == Email);
 
-        return Ok(exists);
+        return Ok(new { exists });
     }
 
     [HttpPost("Register")]
@@ -58,12 +82,12 @@ public class UsersController : ControllerBase
             string.IsNullOrWhiteSpace(register.FirstName) ||
             string.IsNullOrWhiteSpace(register.LastName))
         {
-            return BadRequest("All fields are required");
+            return BadRequest(new { error = "All fields are required" });
         }
 
         if (!IsValidEmail(register.Email))
         {
-            return BadRequest("Invalid email address");
+            return BadRequest(new { error = "Invalid email address" });
         }
 
         var user = await _context.Users
@@ -71,7 +95,7 @@ public class UsersController : ControllerBase
 
         if (user != null)
         {
-            return BadRequest("Email already exists.");
+            return BadRequest(new { error = "Email already exists." });
         }
 
         var newUser = new Users
@@ -85,7 +109,7 @@ public class UsersController : ControllerBase
         _context.Users.Add(newUser);
         await _context.SaveChangesAsync();
 
-        return Ok("Registered successfully.");
+        return Ok(new { message = "Registered successfully." });
     }
 
     private bool IsValidEmail(string email)
@@ -103,12 +127,12 @@ public class UsersController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(loginRequest.Email) || string.IsNullOrWhiteSpace(loginRequest.Password))
         {
-            return BadRequest("Email and password are required");
+            return BadRequest(new { error = "Email and password are required" });
         }
 
         if (!loginRequest.Email.Contains("@") || !loginRequest.Email.Contains("."))
         {
-            return BadRequest("Invalid email address");
+            return BadRequest(new { error = "Invalid email address" });
         }
 
         var user = await _context.Users
@@ -116,15 +140,15 @@ public class UsersController : ControllerBase
 
         if (user == null)
         {
-            return BadRequest("Email does not exist.");
+            return BadRequest(new { error = "Email does not exist." });
         }
 
         if (user.Password != loginRequest.Password)
         {
-            return BadRequest("Invalid password.");
+            return BadRequest(new { error = "Invalid password." });
         }
 
-        return Ok("Login successful.");
+        return Ok(new { message = "Login successful." });
     }
 
     [HttpDelete("{Email}")]
@@ -135,24 +159,21 @@ public class UsersController : ControllerBase
 
         if (User == null)
         {
-            return NotFound();
+            return NotFound(new { error = "User not found." });
         }
 
         _context.Users.Remove(User);
         await _context.SaveChangesAsync();
 
-        return NoContent();
-
-
+        return Ok(new { message = "User deleted successfully." });
     }
-
 
     [HttpPost("ForgotPassword")]
     public async Task<ActionResult<string>> ForgotPassword([FromBody] Microsoft.AspNetCore.Identity.Data.ForgotPasswordRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Email))
         {
-            return BadRequest("Email is required.");
+            return BadRequest(new { error = "Email is required." });
         }
 
         var user = await _context.Users
@@ -160,7 +181,7 @@ public class UsersController : ControllerBase
 
         if (user == null)
         {
-            return BadRequest("Email does not exist.");
+            return BadRequest(new { error = "Email does not exist." });
         }
 
        
@@ -182,7 +203,7 @@ public class UsersController : ControllerBase
 
         await SendEmailAsync(user.Email, "Password Reset",$"Your new password is: {newPassword}");
 
-        return Ok("A new password has been sent to your email.");
+        return Ok(new { message = "A new password has been sent to your email." });
     }
 
     private async Task SendEmailAsync(string toEmail, string subject, string body)
@@ -200,10 +221,5 @@ public class UsersController : ControllerBase
         await smtp.DisconnectAsync(true);
         smtp.DisconnectAsync(true);
     }
-
-
-
-
-
 }
 

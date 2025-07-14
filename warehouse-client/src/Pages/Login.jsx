@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,58 +21,84 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
+      let data = null;
+      try {
+        data = await response.json();
+      } catch (e) {
+        const text = await response.text();
+        data = { message: text, response: response.ok };
+      }
+
       if (response.ok) {
-        const data = await response.text(); // Use text because the API returns plain text
-        console.log('Logged in!', data);
-        setMessage(data); // Show success message
+        setError('');
+        setMessage(data.message || 'Logged in!');
+        // Store user email in localStorage for later use
+        if (data.email) {
+          localStorage.setItem('userEmail', data.email);
+        } else {
+          localStorage.setItem('userEmail', email);
+        }
+        setTimeout(() => {
+          navigate('/home');
+        }, 1000);
       } else {
-        setError('Invalid email or password.');
+        setMessage('');
+        setError(data.message || 'Invalid email or password.');
       }
     } catch (err) {
-      console.error(err);
+      setMessage('');
       setError('Something went wrong. Please try again.');
     }
   };
 
   const handleRegister = () => {
-    // Replace this with your real navigation logic:
-    console.log('Navigate to Register page');
-    // Example: navigate('/register');
+    navigate('/register');
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <div className="error-message">{error}</div>}
-          {message && <div className="success-message">{message}</div>}
-          <button type="submit" className="login-button">Login</button>
-        </form>
-        <button className="register-button" onClick={handleRegister}>
-          Register
-        </button>
+    <>
+      {/* Set your background image in CSS for .login-bg-image */}
+      <div className="login-bg-image"></div>
+      <div className="login-bg-decor">
+        <div className="bg-circle bg-circle1"></div>
+        <div className="bg-circle bg-circle2"></div>
+        <div className="bg-circle bg-circle3"></div>
+        <div className="bg-line"></div>
+        <div className="bg-line2"></div>
       </div>
-    </div>
+      <div className="login-container">
+        <div className="login-card">
+          <h2 className="login-title">Login</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            {error && <div className="error-message">{error}</div>}
+            {!error && message && <div className="success-message">{message}</div>}
+            <button type="submit" className="login-button">Login</button>
+          </form>
+          <button className="register-button" onClick={handleRegister}>
+            Register
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
