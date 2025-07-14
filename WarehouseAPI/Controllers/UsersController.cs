@@ -198,7 +198,7 @@ public class UsersController : ControllerBase
         await smtp.AuthenticateAsync(_emailSettings.Username, _emailSettings.Password);
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);
-        //await smtp.DisconnectAsync(true);
+        smtp.DisconnectAsync(true);
     }
 
 

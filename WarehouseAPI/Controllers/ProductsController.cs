@@ -126,7 +126,7 @@ public class ProductsController : ControllerBase
         var query = from p in _context.Products
                     join c in _context.Companies on p.CompanyID equals c.CompanyID
                     join pc in _context.Product_Categories on p.CategoryID equals pc.CategoryID
-                    where p.PName == pname
+                    where p.PName.Contains(pname)
                     select new ProductJOINS
                     {
                         ProductId = p.ProductId,
