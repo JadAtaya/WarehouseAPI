@@ -55,6 +55,10 @@ export default function Login() {
     navigate('/register');
   };
 
+  const handleForgotPassword = () => {
+    navigate('/Forgot_password');
+  };
+
   return (
     <>
       {/* Set your background image in CSS for .login-bg-image */}
@@ -96,6 +100,9 @@ export default function Login() {
           </form>
           <button className="register-button" onClick={handleRegister}>
             Register
+          </button>
+          <button className="forgot-password-button" type="button" onClick={handleForgotPassword}>
+            Forgot Password ?
           </button>
         </div>
       </div>

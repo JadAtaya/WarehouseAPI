@@ -1,9 +1,20 @@
 /* Home.css */
 
 body {
-    background-color: #78b800;
-    background-image: url("https://www.transparenttextures.com/patterns/brick-wall-dark.png");
-  }
+  --s: 50px; /* control the size*/
+  --c1: #f2f26f;
+  --c2: #a0c55f;
+  --c:#0000 79%,var(--c1) 81% 99%,var(--c2) 101% 150%,#0000 0;
+  background:
+    radial-gradient(var(--s) at 100% 100%,var(--c)),
+    radial-gradient(var(--s) at 100% 0   ,var(--c)) calc(3*var(--s)/2) 0,
+    radial-gradient(var(--s) at 0    100%,var(--c)) calc(  var(--s)/2) 0,
+    radial-gradient(var(--s) at 0    0   ,var(--c)) calc(2*var(--s)) 0,
+    repeating-linear-gradient(90deg,
+      var(--c1) 0 calc(20%/3),#0000 0 calc(70%/3),
+      var(--c1) 0 30%,#0000 0 50%) calc(var(--s)/-5) 0 var(--c2);
+  background-size: calc(3*var(--s)) calc(5*var(--s)/2);
+}
 
 .home-layout {
   display: flex;
@@ -12,8 +23,8 @@ body {
 
 .home-nav {
   width: 220px;
-  background-color: #78b800;
-  background-image: url("https://www.transparenttextures.com/patterns/brick-wall.png");
+  background: #2A7B9B;
+  background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
   border-right: 1px solid #e2e8f0;
   padding: 2rem 1rem;
   display: flex;
@@ -25,42 +36,55 @@ body {
   top: 0;
 }
 
-.home-user-info {
+.home-main {
+  flex: 1;
+  padding: 3rem;
+  text-align: center;
+  color: #222;
+  background: #2A7B9B;
+  background: linear-gradient(90deg, rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%);
+}
+
+/* Sidebar/MainLayout styles */
+
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar-nav {
+  width: 220px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  border-radius: 10px;
+  padding: 2rem 1rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  justify-content: flex-start;
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
+  z-index: 2;
+}
+
+.sidebar-user-info {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 2rem;
 }
 
-.home-user-pfp {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #e2e8f0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.home-user-details {
+.sidebar-nav-buttons {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
 
-.home-user-welcome {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 0.15rem;
-}
-
-.home-user-name {
-  font-weight: bold;
-  font-size: 1.05rem;
-  color: #222;
-}
-
-.home-nav button {
+.sidebar-nav-buttons button {
   padding: 1rem;
   font-size: 1rem;
   border-radius: 6px;
@@ -68,19 +92,172 @@ body {
   background: #e2e8f0;
   cursor: pointer;
   transition: background 0.2s;
+  margin-bottom: 0.5rem;
 }
 
-.home-nav button:hover {
+.sidebar-nav-buttons button:hover {
   background: #cbd5e1;
 }
 
-.home-main {
-  flex: 1;
-  padding: 3rem;
-  text-align: center;
-  color: #222;
-  background-color: #78b800;
-  background-image: url("https://www.transparenttextures.com/patterns/brick-wall-dark.png");
-  /* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
+.return-home-button {
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  background: #fff;
+  color: #222;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: background 0.2s;
+}
+
+.return-home-button:hover {
+  background: #e2e8f0;
+}
+
+.main-content {
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.home-floating-cards-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.home-welcome-card {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 3rem 4rem;
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  z-index: 2;
+}
+
+.home-welcome-card h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 1.2rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(120,184,0,0.08);
+}
+
+.home-welcome-card p {
+  font-size: 1.25rem;
+  color: #333;
+  margin-bottom: 0;
+  text-shadow: 0 1px 4px rgba(120,184,0,0.06);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.floating-category-card {
+  position: absolute;
+  width: 120px;
+  height: 140px;
+  background: rgba(255,255,255,0.35);
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.10);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  z-index: 1;
+  animation: floatCard 4s ease-in-out infinite alternate;
+}
+
+.floating-category-card:hover {
+  transform: scale(1.08) translateY(-8px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+}
+
+.category-img {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.category-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Unique positions for each floating card */
+.floating-card-0 { top: 6%; left: -5%; animation-delay: 0s; }
+.floating-card-1 { top: 17%; right: -25%; animation-delay: 0.5s; }
+.floating-card-2 { bottom: 20%; left: -40%; animation-delay: 1s; }
+.floating-card-3 { bottom: 2%; right: -12%; animation-delay: 1.5s; }
+.floating-card-4 { top: 60%; left: 135%; transform: translateY(-50%); animation-delay: 2s; }
+.floating-card-5 { bottom: 50%; right: 135%; animation-delay: 2.5s; }
+
+@keyframes floatCard {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(-18px) scale(1.04); }
+}
+
+@media (max-width: 900px) {
+  .floating-category-card {
+    width: 90px;
+    height: 100px;
+    font-size: 0.9rem;
+  }
+  .floating-card-0 { top: 0%; left: 0%; }
+  .floating-card-1 { top: 8%; right: 0%; }
+  .floating-card-2 { bottom: 0%; left: 0%; }
+  .floating-card-3 { bottom: 0%; right: 0%; }
+  .floating-card-4 { top: 60%; left: 80%; }
+  .floating-card-5 { bottom: 30%; right: 0%; }
+}
+
+@media (max-width: 600px) {
+  .home-floating-cards-container {
+    flex-direction: column;
+    min-height: 80vh;
+  }
+  .floating-category-card {
+    position: static;
+    margin: 0.5rem auto;
+    width: 90%;
+    max-width: 300px;
+    height: 80px;
+    animation: none;
+    transform: none !important;
+  }
+}
