@@ -72,6 +72,9 @@ export default function MainLayout() {
           <button onClick={() => navigate('/companies')}>Companies</button>
           <button onClick={() => navigate('/users')}>Users</button>
         </div>
+        <div className="sidebar-logo-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '8rem 0'}}>
+          <img src="/warehouselogo.png" alt="Warehouse Logo" style={{ width: '200px', height: '200px', margin: '0 auto', marginLeft: '-8px' }} />
+        </div>
         <div className="sidebar-bottom">
           <button className="return-home-button" onClick={() => navigate('/home')}>
             Return Home

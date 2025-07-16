@@ -5,6 +5,7 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetch('https://localhost:7020/api/Products', { credentials: 'include' })
@@ -24,25 +25,53 @@ export default function Products() {
       });
   }, []);
 
+  const filteredProducts = products.filter(
+    (product) =>
+      product.pName?.toLowerCase().includes(search.toLowerCase()) ||
+      product.description?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="products-page" style={{ padding: '2rem' }}>
-      <h2>Products</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="products-page">
+      <div className="products-header">
+        <h2>Products</h2>
+        <button className="add-product-btn" disabled title="Coming soon">+ Add Product</button>
+      </div>
+      <div className="products-search-bar">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+      </div>
+      {loading && <p className="products-loading">Loading...</p>}
+      {error && <p className="products-error">{error}</p>}
       {!loading && !error && (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {products.length === 0 ? (
-            <li>No products found.</li>
+        <div className="products-grid">
+          {filteredProducts.length === 0 ? (
+            <div className="products-empty">No products found.</div>
           ) : (
-            products.map((product) => (
-              <li key={product.id || product.productID} style={{ marginBottom: '1rem', background: '#fff', borderRadius: '6px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)', padding: '1rem' }}>
-                <strong>{product.name || product.productName}</strong><br />
-                {product.description && <span>{product.description}</span>}
-                {/* Add more product fields as needed */}
-              </li>
+            filteredProducts.map((product) => (
+              <div className="product-card" key={product.id || product.productID}>
+                <div className="product-card-content">
+                  <div className="product-card-title-row">
+                    <span className="product-card-name">{product.pName}</span>
+                  </div>
+                  {product.description && <div className="product-card-description">{product.description}</div>}
+                  <div className="product-info-row">
+                    <span className="product-label">Quantity:</span>
+                    <span className="product-value">{product.quantity}</span>
+                  </div>
+                  <div className="product-info-row">
+                    <span className="product-label">Price:</span>
+                    <span className="product-value">${product.price}</span>
+                  </div>
+                </div>
+              </div>
             ))
           )}
-        </ul>
+        </div>
       )}
     </div>
   );
