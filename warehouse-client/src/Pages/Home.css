@@ -123,6 +123,22 @@ body {
   background: #e2e8f0;
 }
 
+.logout-button {
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  background: #e53e3e;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: background 0.2s;
+}
+.logout-button:hover {
+  background: #c53030;
+}
+
 .main-content {
   flex: 1;
   min-height: 100vh;

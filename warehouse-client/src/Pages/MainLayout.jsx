@@ -43,6 +43,11 @@ export default function MainLayout() {
       });
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('userEmail');
+    navigate('/login');
+  };
+
   return (
     <div className="main-layout">
       <nav className="sidebar-nav">
@@ -78,6 +83,9 @@ export default function MainLayout() {
         <div className="sidebar-bottom">
           <button className="return-home-button" onClick={() => navigate('/home')}>
             Return Home
+          </button>
+          <button className="logout-button" onClick={handleLogout} style={{marginTop: '0.5rem'}}>
+            Logout
           </button>
         </div>
       </nav>
