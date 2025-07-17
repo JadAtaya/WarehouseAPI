@@ -1,0 +1,224 @@
+.category-page {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.category-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2A7B9B;
+  margin: 0;
+}
+
+.category-search-bar {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.category-search-bar input {
+  width: 100%;
+  max-width: 350px;
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+}
+
+.category-search-bar input:focus {
+  border: 1.5px solid #2A7B9B;
+  outline: none;
+}
+
+.category-loading,
+.category-error,
+.category-empty {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}
+
+.category-error {
+  color: #d93025;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .category-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .category-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.category-card {
+  background: linear-gradient(135deg, #e3f6fc 0%, #f8fafc 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 18px 0 rgba(42,123,155,0.10);
+  padding: 2.5rem 1.5rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+  border: 1px solid #e2e8f0;
+  min-height: 100px;
+  min-width: 150px;
+  position: relative;
+  overflow: hidden;
+}
+
+.category-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 32px 0 rgba(42,123,155,0.18);
+  border-color: #2A7B9B;
+}
+
+.category-card-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.category-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2A7B9B;
+  text-align: center;
+}
+
+.add-category-btn {
+  background: #2A7B9B;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;
+  box-shadow: 0 2px 8px rgba(42, 123, 155, 0.08);
+  transition: background 0.2s;
+  margin-left: 1rem;
+}
+.add-category-btn:hover {
+  background: #005bb5;
+}
+
+.category-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+.edit-btn {
+  background: #4FC3F7;
+  color: #222;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.edit-btn:hover {
+  background: #2A7B9B;
+  color: #fff;
+}
+.delete-btn {
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.delete-btn:hover {
+  background: #c53030;
+}
+
+.category-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.category-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  color: #2A7B9B;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+.category-form input {
+  margin-top: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+}
+.category-form input:focus {
+  border: 1.5px solid #2A7B9B;
+  outline: none;
+}
+.form-error {
+  color: #d93025;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .category-page {
+    padding: 1rem;
+  }
+  .category-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .category-search-bar {
+    justify-content: stretch;
+  }
+  .category-grid {
+    gap: 1rem;
+  }
+  .category-card {
+    min-height: 110px;
+    padding: 1.5rem;
+  }
+  .category-name {
+    font-size: 1.1rem;
+  }
+}

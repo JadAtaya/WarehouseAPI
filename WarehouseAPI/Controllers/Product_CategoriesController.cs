@@ -23,4 +23,51 @@ public class Product_CategoriesController : ControllerBase
     {
         return await _context.Product_Categories.ToListAsync();
     }
+
+    [HttpPost]
+    public async Task<ActionResult<Product_Categories>> PostProductCategory(Product_Categories_POSTPUT categoryModel)
+    {
+        if (string.IsNullOrWhiteSpace(categoryModel.Prod_CategoryName))
+        {
+            return BadRequest(new { error = "Category name is required." });
+        }
+        var category = new Product_Categories
+        {
+            Prod_CategoryName = categoryModel.Prod_CategoryName,
+            Created_at = DateTime.UtcNow
+        };
+        _context.Product_Categories.Add(category);
+        await _context.SaveChangesAsync();
+        return CreatedAtAction(nameof(GetProduct_Categories), new { id = category.CategoryID }, category);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> PutProductCategory(int id, Product_Categories_POSTPUT updatedCategoryModel)
+    {
+        var category = await _context.Product_Categories.FindAsync(id);
+        if (category == null)
+        {
+            return NotFound(new { error = "Category not found." });
+        }
+        if (string.IsNullOrWhiteSpace(updatedCategoryModel.Prod_CategoryName))
+        {
+            return BadRequest(new { error = "Category name is required." });
+        }
+        category.Prod_CategoryName = updatedCategoryModel.Prod_CategoryName;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Category updated successfully." });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProductCategory(int id)
+    {
+        var category = await _context.Product_Categories.FindAsync(id);
+        if (category == null)
+        {
+            return NotFound(new { error = "Category not found." });
+        }
+        _context.Product_Categories.Remove(category);
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Category deleted successfully." });
+    }
 }
