@@ -368,3 +368,11 @@
   margin-right: auto;
 }
 
+.products-subtitle, .category-subtitle, .companies-subtitle {
+  font-size: 1.08rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+

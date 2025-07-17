@@ -168,7 +168,10 @@ export default function Category() {
       <AddCategoryModal open={showAdd} onClose={() => setShowAdd(false)} onAdd={fetchCategories} />
       <EditCategoryModal open={showEdit} onClose={() => setShowEdit(false)} onEdit={fetchCategories} category={editCategory} />
       <div className="category-header">
-        <h2><strong>Categories</strong></h2>
+        <div>
+          <h2><strong>Categories</strong></h2>
+          <div className="category-subtitle">Organize and manage product categories for easy browsing and filtering.</div>
+        </div>
         <button className="add-category-btn" onClick={() => setShowAdd(true)}>+ Add Category</button>
       </div>
       <div className="category-search-bar">

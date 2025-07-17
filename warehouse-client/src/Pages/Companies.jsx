@@ -168,7 +168,10 @@ export default function Companies() {
       <AddCompanyModal open={showAdd} onClose={() => setShowAdd(false)} onAdd={fetchCompanies} />
       <EditCompanyModal open={showEdit} onClose={() => setShowEdit(false)} onEdit={fetchCompanies} company={editCompany} />
       <div className="companies-header">
-        <h2><strong>Companies</strong></h2>
+        <div>
+          <h2><strong>Companies</strong></h2>
+          <div className="companies-subtitle">View and manage all companies associated with your warehouse products.</div>
+        </div>
         <button className="add-company-btn" onClick={() => setShowAdd(true)}>+ Add Company</button>
       </div>
       <div className="companies-search-bar">

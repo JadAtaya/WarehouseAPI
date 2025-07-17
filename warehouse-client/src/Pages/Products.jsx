@@ -257,7 +257,10 @@ export default function Products() {
       <AddProductModal open={showAdd} onClose={() => setShowAdd(false)} onAdd={fetchProducts} companies={companies} categories={categories} />
       <EditProductModal open={showEdit} onClose={() => setShowEdit(false)} onEdit={fetchProducts} product={editProduct} companies={companies} categories={categories} />
       <div className="products-header">
-        <h2><strong>Products</strong></h2>
+        <div>
+          <h2><strong>Products</strong></h2>
+          <div className="products-subtitle">Browse, search, and manage all products in your warehouse inventory.</div>
+        </div>
         <button className="add-product-btn" onClick={() => setShowAdd(true)}>+ Add Product</button>
       </div>
       <div className="products-search-bar">
