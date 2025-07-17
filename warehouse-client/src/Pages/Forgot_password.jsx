@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Forgot_password.css';
 import { useNavigate } from 'react-router-dom';
+import { FaSignInAlt, FaKey } from 'react-icons/fa';
 
 export default function Forgot_password() {
   const [email, setEmail] = useState('');
@@ -47,8 +48,10 @@ export default function Forgot_password() {
 
   return (
     <div className="forgot-bg-container">
-      <div className="forgot-card">
-        <h2 className="forgot-title">Forgot Password</h2>
+      <div className="login-card enhanced">
+        <img src="/warehouselogo.png" alt="Warehouse Logo" className="login-logo" />
+        <h2 className="login-title">Forgot Password?</h2>
+        <p className="login-tagline">Enter your email and we'll send you a new password.</p>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email</label>
@@ -62,12 +65,12 @@ export default function Forgot_password() {
           </div>
           {error && <div className="error-message">{error}</div>}
           {!error && message && <div className="success-message">{message}</div>}
-          <button type="submit" className="forgot-button" disabled={loading}>
-            {loading ? 'Sending...' : 'Send New Password'}
+          <button type="submit" className="login-button" disabled={loading}>
+            <FaKey style={{marginRight: '0.5rem'}} />{loading ? 'Sending...' : 'Send New Password'}
           </button>
         </form>
-        <button className="back-login-button" type="button" onClick={handleBackToLogin}>
-          Back to Login
+        <button className="register-button" type="button" onClick={handleBackToLogin}>
+          <FaSignInAlt style={{marginRight: '0.5rem'}} />Back to Login
         </button>
       </div>
     </div>

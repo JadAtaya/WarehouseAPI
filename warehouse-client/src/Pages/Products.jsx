@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Products.css';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const PRODUCTS_PER_PAGE = 9;
 
@@ -256,7 +257,7 @@ export default function Products() {
       <AddProductModal open={showAdd} onClose={() => setShowAdd(false)} onAdd={fetchProducts} companies={companies} categories={categories} />
       <EditProductModal open={showEdit} onClose={() => setShowEdit(false)} onEdit={fetchProducts} product={editProduct} companies={companies} categories={categories} />
       <div className="products-header">
-        <h2>Products</h2>
+        <h2><strong>Products</strong></h2>
         <button className="add-product-btn" onClick={() => setShowAdd(true)}>+ Add Product</button>
       </div>
       <div className="products-search-bar">
@@ -301,9 +302,9 @@ export default function Products() {
                           }
                         }}
                       >
-                        Edit
+                        <FaEdit style={{marginRight: '0.3rem'}} />Edit
                       </button>
-                      <button className="delete-btn" onClick={() => handleDelete(product)}>Delete</button>
+                      <button className="delete-btn" onClick={() => handleDelete(product)}><FaTrash style={{marginRight: '0.3rem'}} />Delete</button>
                     </div>
                   </div>
                 </div>

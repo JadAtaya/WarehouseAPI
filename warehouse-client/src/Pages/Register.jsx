@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import './Register.css';
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
@@ -51,7 +53,6 @@ export default function Register() {
 
   return (
     <>
-      {/* Set your background image in CSS for .login-bg-image */}
       <div className="login-bg-image"></div>
       <div className="login-bg-decor">
         <div className="bg-circle bg-circle1"></div>
@@ -61,8 +62,10 @@ export default function Register() {
         <div className="bg-line2"></div>
       </div>
       <div className="login-container">
-        <div className="login-card">
-          <h2 className="login-title">Register</h2>
+        <div className="login-card enhanced">
+          <img src="/warehouselogo.png" alt="Warehouse Logo" className="login-logo" />
+          <h2 className="login-title">Create Your Account</h2>
+          <p className="login-tagline">Register to start managing your warehouse.</p>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>First Name</label>
@@ -96,20 +99,31 @@ export default function Register() {
             </div>
             <div className="form-group">
               <label>Password</label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="input-icon-group">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password-btn"
+                  onClick={() => setShowPassword((v) => !v)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
             {error && <div className="error-message">{error}</div>}
             {message && <div className="success-message">{message}</div>}
-            <button type="submit" className="login-button">Register</button>
+            <button type="submit" className="login-button"><FaUserPlus style={{marginRight: '0.5rem'}} />Register</button>
           </form>
           <button className="register-button" onClick={handleLogin}>
-            Back to Login
+            <FaSignInAlt style={{marginRight: '0.5rem'}} />Back to Login
           </button>
         </div>
       </div>

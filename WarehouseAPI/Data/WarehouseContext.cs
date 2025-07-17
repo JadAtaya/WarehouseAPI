@@ -10,6 +10,7 @@ namespace WarehouseAPI.Data
 
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Companies> Companies => Set<Companies>();
+        public DbSet<Companies_POSTPUT> Companies_POSTPUT => Set<Companies_POSTPUT>();
         public DbSet<Users> Users => Set<Users>(); 
         public DbSet<GetSingleUser> GetoneUsers => Set<GetSingleUser>();
         public DbSet<Product_Categories> Product_Categories => Set<Product_Categories>();

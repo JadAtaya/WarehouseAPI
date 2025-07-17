@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Outlet } from 'react-router-dom';
+import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import './Home.css';
+import { FaBoxOpen, FaTags, FaBuilding, FaUsers, FaHome, FaSignOutAlt } from 'react-icons/fa';
 
 export default function MainLayout() {
   const [user, setUser] = useState({ firstName: '', lastName: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const userEmail = localStorage.getItem('userEmail');
@@ -44,8 +46,10 @@ export default function MainLayout() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('userEmail');
-    navigate('/login');
+    if (window.confirm('Are you sure you want to log out?')) {
+      localStorage.removeItem('userEmail');
+      navigate('/login');
+    }
   };
 
   return (
@@ -72,20 +76,20 @@ export default function MainLayout() {
           </div>
         </div>
         <div className="sidebar-nav-buttons">
-          <button onClick={() => navigate('/products')}>Products</button>
-          <button onClick={() => navigate('/category')}>Categories</button>
-          <button onClick={() => navigate('/companies')}>Companies</button>
-          <button onClick={() => navigate('/users')}>Users</button>
+          <button onClick={() => navigate('/products')} className={location.pathname.startsWith('/products') ? 'active' : ''}><FaBoxOpen /> Products</button>
+          <button onClick={() => navigate('/category')} className={location.pathname.startsWith('/category') ? 'active' : ''}><FaTags /> Categories</button>
+          <button onClick={() => navigate('/companies')} className={location.pathname.startsWith('/companies') ? 'active' : ''}><FaBuilding /> Companies</button>
+          <button onClick={() => navigate('/users')} className={location.pathname.startsWith('/users') ? 'active' : ''}><FaUsers /> Users</button>
         </div>
         <div className="sidebar-logo-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '8rem 0'}}>
           <img src="/warehouselogo.png" alt="Warehouse Logo" style={{ width: '200px', height: '200px', margin: '0 auto', marginLeft: '-8px' }} />
         </div>
         <div className="sidebar-bottom">
           <button className="return-home-button" onClick={() => navigate('/home')}>
-            Return Home
+            <FaHome style={{marginRight: '0.5rem'}} />Return Home
           </button>
           <button className="logout-button" onClick={handleLogout} style={{marginTop: '0.5rem'}}>
-            Logout
+            <FaSignOutAlt style={{marginRight: '0.5rem'}} />Logout
           </button>
         </div>
       </nav>

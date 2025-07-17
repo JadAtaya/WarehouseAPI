@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Category.css';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 
 function AddCategoryModal({ open, onClose, onAdd }) {
   const [name, setName] = useState('');
@@ -167,7 +168,7 @@ export default function Category() {
       <AddCategoryModal open={showAdd} onClose={() => setShowAdd(false)} onAdd={fetchCategories} />
       <EditCategoryModal open={showEdit} onClose={() => setShowEdit(false)} onEdit={fetchCategories} category={editCategory} />
       <div className="category-header">
-        <h2>Categories</h2>
+        <h2><strong>Categories</strong></h2>
         <button className="add-category-btn" onClick={() => setShowAdd(true)}>+ Add Category</button>
       </div>
       <div className="category-search-bar">
@@ -190,8 +191,8 @@ export default function Category() {
                 <div className="category-card-content">
                   <span className="category-name">{cat.prod_CategoryName}</span>
                   <div className="category-card-actions">
-                    <button className="edit-btn" onClick={() => { setEditCategory(cat); setShowEdit(true); }}>Edit</button>
-                    <button className="delete-btn" onClick={() => handleDelete(cat)}>Delete</button>
+                    <button className="edit-btn" onClick={() => { setEditCategory(cat); setShowEdit(true); }}><FaEdit style={{marginRight: '0.3rem'}} />Edit</button>
+                    <button className="delete-btn" onClick={() => handleDelete(cat)}><FaTrash style={{marginRight: '0.3rem'}} />Delete</button>
                   </div>
                 </div>
               </div>

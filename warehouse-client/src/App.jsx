@@ -7,7 +7,7 @@ import Category from './Pages/Category.jsx';
 import Companies from './Pages/Companies.jsx';
 import Users from './Pages/Users.jsx';
 import MainLayout from './Pages/MainLayout.jsx';
-import Forgot_password from './Pages/Forgot_password.jsx';
+import ForgotPassword from './Pages/Forgot_password.jsx';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom';
 
 function isAuthenticated() {
@@ -27,7 +27,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/forgot_password" element={<Forgot_password />} />
+        <Route path="/forgot_password" element={<ForgotPassword />} />
         <Route path="/register" element={<Register />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
