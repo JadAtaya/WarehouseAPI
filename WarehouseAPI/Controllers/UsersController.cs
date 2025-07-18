@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using MimeKit;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using WarehouseAPI.CustomModels;
 using WarehouseAPI.Data;
@@ -19,11 +21,13 @@ public class UsersController : ControllerBase
 {
     private readonly WarehouseContext _context;
     private readonly EmailSettings _emailSettings;
+    private readonly IConfiguration _configuration;
 
-    public UsersController(WarehouseContext context, IOptions<EmailSettings> emailSettings)
+    public UsersController(WarehouseContext context, IOptions<EmailSettings> emailSettings, IConfiguration configuration)
     {
         _context = context;
         _emailSettings = emailSettings.Value;
+        _configuration = configuration;
     }
 
     [HttpGet]
@@ -77,6 +81,7 @@ public class UsersController : ControllerBase
     [HttpPost("Register")]
     public async Task<ActionResult<string>> Register([FromBody] Register register)
     {
+        Console.WriteLine($"[Register] Called for email: {register.Email}");
         if (string.IsNullOrWhiteSpace(register.Email) ||
             string.IsNullOrWhiteSpace(register.Password) ||
             string.IsNullOrWhiteSpace(register.FirstName) ||
@@ -84,32 +89,52 @@ public class UsersController : ControllerBase
         {
             return BadRequest(new { error = "All fields are required" });
         }
-
         if (!IsValidEmail(register.Email))
         {
             return BadRequest(new { error = "Invalid email address" });
         }
-
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Email == register.Email);
-
         if (user != null)
         {
             return BadRequest(new { error = "Email already exists." });
         }
-
+        var tokenBytes = RandomNumberGenerator.GetBytes(32);
+        var token = Convert.ToBase64String(tokenBytes);
         var newUser = new Users
         {
             FirstName = register.FirstName,
             LastName = register.LastName,
             Email = register.Email,
-            Password = register.Password
+            Password = register.Password,
+            Created_at = DateTime.UtcNow,
+            IsVerified = false,
+            VerificationToken = token
         };
-
         _context.Users.Add(newUser);
         await _context.SaveChangesAsync();
+        var baseUrl = _configuration["AppBaseUrl"];
+        var verificationUrl = $"{baseUrl}/api/users/verify?token={token}";
+        Console.WriteLine($"[Register] Sending verification link: {verificationUrl}");
+        await SendEmailAsync(newUser.Email, "Verify your account", $"Click here to verify your account: {verificationUrl}");
+        return Ok(new { message = "Registered successfully. Please check your email to verify your account." });
+    }
 
-        return Ok(new { message = "Registered successfully." });
+    [HttpGet("verify")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+    {
+        Console.WriteLine($"[VerifyEmail] Received token: {token}");
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.VerificationToken == token);
+        if (user == null)
+        {
+            var allTokens = await _context.Users.Where(u => !u.IsVerified).Select(u => u.VerificationToken).ToListAsync();
+            Console.WriteLine($"[VerifyEmail] Existing tokens for unverified users: {string.Join(", ", allTokens)}");
+            return BadRequest(new { error = "Invalid or expired verification token." });
+        }
+        user.IsVerified = true;
+        user.VerificationToken = null;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Email verified successfully. You can now log in." });
     }
 
     private bool IsValidEmail(string email)
@@ -141,6 +166,11 @@ public class UsersController : ControllerBase
         if (user == null)
         {
             return BadRequest(new { error = "Email does not exist." });
+        }
+
+        if (!user.IsVerified)
+        {
+            return Unauthorized(new { error = "Please verify your email before logging in." });
         }
 
         if (user.Password != loginRequest.Password)
@@ -208,6 +238,7 @@ public class UsersController : ControllerBase
 
     private async Task SendEmailAsync(string toEmail, string subject, string body)
     {
+        Console.WriteLine($"[SendEmailAsync] Sending email to: {toEmail}, subject: {subject}");
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_emailSettings.SenderEmail));
         email.To.Add(MailboxAddress.Parse(toEmail));
@@ -219,7 +250,84 @@ public class UsersController : ControllerBase
         await smtp.AuthenticateAsync(_emailSettings.Username, _emailSettings.Password);
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);
-        smtp.DisconnectAsync(true);
+    }
+
+    public class SendVerificationLinkRequest
+    {
+        public string Email { get; set; }
+    }
+
+    [HttpPost("SendVerificationLink")]
+    public async Task<IActionResult> SendVerificationLink([FromBody] SendVerificationLinkRequest request)
+    {
+        Console.WriteLine($"[SendVerificationLink] Called for email: {request.Email}");
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return BadRequest(new { error = "Email is required." });
+        }
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found." });
+        }
+        if (user.IsVerified)
+        {
+            return BadRequest(new { error = "User is already verified." });
+        }
+        // Generate new token
+        var tokenBytes = RandomNumberGenerator.GetBytes(32);
+        var token = Convert.ToBase64String(tokenBytes);
+        user.VerificationToken = token;
+        await _context.SaveChangesAsync();
+        var baseUrl = _configuration["AppBaseUrl"];
+        var verificationUrl = $"{baseUrl}/api/users/verify?token={token}";
+        Console.WriteLine($"[SendVerificationLink] Sending verification link: {verificationUrl}");
+        await SendEmailAsync(user.Email, "Verify your account", $"Click here to verify your account: {verificationUrl}");
+        return Ok(new { message = "Verification link sent to your email." });
+    }
+
+    public class CheckEmailVerifiedRequest
+    {
+        public string Email { get; set; }
+    }
+
+    [HttpPost("CheckEmailVerified")]
+    public async Task<IActionResult> CheckEmailVerified([FromBody] CheckEmailVerifiedRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Email))
+        {
+            return BadRequest(new { error = "Email is required." });
+        }
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+        if (user == null)
+        {
+            return NotFound(new { error = "User not found." });
+        }
+        return Ok(new { isVerified = user.IsVerified });
+    }
+
+    [HttpPost("SendVerificationLinksToUnverified")]
+    public async Task<IActionResult> SendVerificationLinksToUnverified()
+    {
+        var baseUrl = _configuration["AppBaseUrl"];
+        var unverifiedUsers = await _context.Users
+            .Where(u => !u.IsVerified)
+            .ToListAsync();
+        int sentCount = 0;
+        foreach (var user in unverifiedUsers)
+        {
+            if (string.IsNullOrEmpty(user.VerificationToken))
+            {
+                var tokenBytes = RandomNumberGenerator.GetBytes(32);
+                var token = Convert.ToBase64String(tokenBytes);
+                user.VerificationToken = token;
+                var verificationUrl = $"{baseUrl}/api/users/verify?token={token}";
+                await SendEmailAsync(user.Email, "Verify your account", $"Click here to verify your account: {verificationUrl}");
+                sentCount++;
+            }
+        }
+        await _context.SaveChangesAsync();
+        return Ok(new { message = $"Verification links sent to {sentCount} unverified users." });
     }
 }
 

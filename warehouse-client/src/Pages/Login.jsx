@@ -9,6 +9,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [resending, setResending] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -32,6 +33,31 @@ export default function Login() {
       }
 
       if (response.ok) {
+        // Check if user is verified (assuming API returns isVerified or similar)
+        if (data.isVerified === false || (typeof data.message === 'string' && data.message.toLowerCase().includes('not verified'))) {
+          setError('Your account is not verified. A new verification email will be sent to you.');
+          setMessage('');
+          setResending(true);
+          // Send verification email
+          fetch('https://localhost:7020/api/Users/SendVerificationLink', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+          })
+            .then(async (res) => {
+              let msg = 'A new verification email has been sent.';
+              try {
+                const data = await res.json();
+                if (data.message) msg = data.message;
+              } catch {}
+              setMessage(msg);
+            })
+            .catch(() => {
+              setMessage('Failed to send verification email. Please try again later.');
+            })
+            .finally(() => setResending(false));
+          return;
+        }
         setError('');
         setMessage(data.message || 'Logged in!');
         if (data.email) {
@@ -43,8 +69,52 @@ export default function Login() {
           navigate('/home');
         }, 1000);
       } else {
-        setMessage('');
-        setError(data.message || 'Invalid email or password.');
+        // After failed login, check if the account is unverified
+        fetch('https://localhost:7020/api/Users/CheckEmailVerified', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        })
+          .then(async (res) => {
+            let checkData = null;
+            try {
+              checkData = await res.json();
+            } catch {
+              setMessage('');
+              setError(data.message || 'Invalid email or password.');
+              return;
+            }
+            if (checkData && checkData.isVerified === false) {
+              setError('Your account is not verified. A new verification email will be sent to you.');
+              setMessage('');
+              setResending(true);
+              // Send verification email
+              fetch('https://localhost:7020/api/Users/SendVerificationLink', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+              })
+                .then(async (res) => {
+                  let msg = 'A new verification email has been sent.';
+                  try {
+                    const data = await res.json();
+                    if (data.message) msg = data.message;
+                  } catch {}
+                  setMessage(msg);
+                })
+                .catch(() => {
+                  setMessage('Failed to send verification email. Please try again later.');
+                })
+                .finally(() => setResending(false));
+            } else {
+              setMessage('');
+              setError(data.message || 'Invalid email or password.');
+            }
+          })
+          .catch(() => {
+            setMessage('');
+            setError(data.message || 'Invalid email or password.');
+          });
       }
     } catch (err) {
       setMessage('');
@@ -109,7 +179,7 @@ export default function Login() {
             </div>
             {error && <div className="error-message">{error}</div>}
             {!error && message && <div className="success-message">{message}</div>}
-            <button type="submit" className="login-button"><FaSignInAlt style={{marginRight: '0.5rem'}} />Login</button>
+            <button type="submit" className="login-button" disabled={resending}><FaSignInAlt style={{marginRight: '0.5rem'}} />Login</button>
           </form>
           <button className="register-button" onClick={handleRegister}>
             <FaUserPlus style={{marginRight: '0.5rem'}} />Register

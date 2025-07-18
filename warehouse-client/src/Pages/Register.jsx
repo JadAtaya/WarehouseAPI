@@ -11,10 +11,13 @@ export default function Register() {
   const [lastName, setLastName] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return; // Prevent double submit
+    setLoading(true);
     setError('');
     setMessage('');
 
@@ -34,16 +37,16 @@ export default function Register() {
       }
 
       if (response.ok) {
-        setMessage(data.message || 'Registration successful!');
-        setTimeout(() => {
-          navigate('/login');
-        }, 1000);
+        setMessage((data.message || 'Registration successful!') + ' Please check your email to verify your account before logging in.');
+        // Do not auto-redirect to login; wait for user to verify
       } else {
         setError(data.message || 'Registration failed. Please check your details.');
       }
     } catch (err) {
       console.error(err);
       setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,7 +123,7 @@ export default function Register() {
             </div>
             {error && <div className="error-message">{error}</div>}
             {message && <div className="success-message">{message}</div>}
-            <button type="submit" className="login-button"><FaUserPlus style={{marginRight: '0.5rem'}} />Register</button>
+            <button type="submit" className="login-button" disabled={loading}><FaUserPlus style={{marginRight: '0.5rem'}} />{loading ? 'Registering...' : 'Register'}</button>
           </form>
           <button className="register-button" onClick={handleLogin}>
             <FaSignInAlt style={{marginRight: '0.5rem'}} />Back to Login

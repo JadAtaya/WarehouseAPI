@@ -17,5 +17,7 @@ namespace WarehouseAPI.Models
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public DateTime Created_at { get; set; }
+        public bool IsVerified { get; set; } = false;
+        public string? VerificationToken { get; set; }
     }
 }
