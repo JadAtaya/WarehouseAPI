@@ -8,7 +8,7 @@ namespace WarehouseAPI.Models
     {
         [Key]
         public int CompanyID { get; set; }
-        public string Company_Name { get; set; } = string.Empty;
+        public string Company_Name { get; set; }
         public DateTime Created_at { get; set; }
     }
 }

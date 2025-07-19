@@ -65,8 +65,8 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
               {categories.map(cat => <option key={cat.categoryID} value={cat.categoryID}>{cat.prod_CategoryName}</option>)}
             </select>
           </label>
-          <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" /></label>
-          <label>Price<input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="0.01" /></label>
+          <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" onWheel={e => e.target.blur()} /></label>
+          <label>Price<input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="0.01" onWheel={e => e.target.blur()} /></label>
           {error && <div className="form-error">{error}</div>}
           <div className="modal-actions">
             <button type="button" onClick={onClose} disabled={loading}>Cancel</button>
@@ -164,8 +164,8 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
               {categories.map(cat => <option key={cat.categoryID} value={cat.categoryID}>{cat.prod_CategoryName}</option>)}
             </select>
           </label>
-          <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" /></label>
-          <label>Price<input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="0.01" /></label>
+          <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" onWheel={e => e.target.blur()} /></label>
+          <label>Price<input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="0.01" onWheel={e => e.target.blur()} /></label>
           {error && <div className="form-error">{error}</div>}
           <div className="modal-actions">
             <button type="button" onClick={onClose} disabled={loading}>Cancel</button>

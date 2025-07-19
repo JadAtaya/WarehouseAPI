@@ -23,14 +23,16 @@ export default function Home() {
           Explore Products <FaArrowRight style={{marginLeft: '0.7rem', fontSize: '1.1em'}} />
         </a>
       </div>
-      {categories.map((cat, idx) => (
-        <div className={`floating-category-card floating-card-${idx}`} key={cat.name} tabIndex={0} title={cat.name}>
-          <div className="category-img-bg">
-            <span className="category-img">{cat.img}</span>
+      <div className="floating-cards-list">
+        {categories.map((cat, idx) => (
+          <div className={`floating-category-card floating-card-${idx}`} key={cat.name} tabIndex={0} title={cat.name}>
+            <div className="category-img-bg">
+              <span className="category-img">{cat.img}</span>
+            </div>
+            <div className="category-name">{cat.name}</div>
           </div>
-          <div className="category-name">{cat.name}</div>
-        </div>
-      ))}
+        ))}
+      </div>
       <div className="home-bg-overlay"></div>
     </div>
   );

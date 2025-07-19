@@ -12,7 +12,7 @@ namespace WarehouseAPI.Models
 
         [Key]
         public int CategoryID { get; set; }
-        public string Prod_CategoryName { get; set; } = string.Empty;
+        public string Prod_CategoryName { get; set; }
         public DateTime Created_at { get; set; }
     }
 }

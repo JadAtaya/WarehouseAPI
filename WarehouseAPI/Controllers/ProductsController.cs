@@ -56,6 +56,7 @@ public class ProductsController : ControllerBase
             CategoryID = newproduct.CategoryID,
             Quantity = newproduct.Quantity,
             Price = newproduct.Price,
+            Created_at = DateTime.UtcNow // Ensure correct creation time
         };
 
         _context.Products.Add(product);
