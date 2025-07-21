@@ -2,8 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WarehouseAPI.Data;
 using WarehouseAPI.Models;
-using WarehouseAPI.Data;
-using WarehouseAPI.Models;
+using WarehouseAPI.CustomModels;
 
 namespace WarehouseApi.Controllers;
 
@@ -34,7 +33,8 @@ public class CompaniesController : ControllerBase
         var company = new Companies
         {
             Company_Name = companyModel.Company_Name,
-            Created_at = DateTime.UtcNow
+            Created_at = DateTime.UtcNow,
+            IsDeleted = companyModel.IsDeleted
         };
         _context.Companies.Add(company);
         await _context.SaveChangesAsync();
@@ -45,7 +45,7 @@ public class CompaniesController : ControllerBase
     public async Task<IActionResult> PutCompany(int id, Companies_POSTPUT updatedCompanyModel)
     {
         var company = await _context.Companies.FindAsync(id);
-        if (company == null)
+        if (company == null || company.IsDeleted)
         {
             return NotFound(new { error = "Company not found." });
         }
@@ -54,6 +54,7 @@ public class CompaniesController : ControllerBase
             return BadRequest(new { error = "Company name is required." });
         }
         company.Company_Name = updatedCompanyModel.Company_Name;
+        company.IsDeleted = updatedCompanyModel.IsDeleted;
         await _context.SaveChangesAsync();
         return Ok(new { message = "Company updated successfully." });
     }
@@ -68,6 +69,19 @@ public class CompaniesController : ControllerBase
         }
         _context.Companies.Remove(company);
         await _context.SaveChangesAsync();
-        return Ok(new { message = "Company deleted successfully." });
+        return Ok(new { message = "Company deleted permanently." });
+    }
+
+    [HttpPut("{id}/isdeleted")]
+    public async Task<IActionResult> UpdateCompanyIsDeleted(int id, [FromBody] CompanyIsDeletedUpdate update)
+    {
+        var company = await _context.Companies.FindAsync(id);
+        if (company == null)
+        {
+            return NotFound(new { error = "Company not found." });
+        }
+        company.IsDeleted = update.IsDeleted;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = $"Company IsDeleted updated to {update.IsDeleted}." });
     }
 }

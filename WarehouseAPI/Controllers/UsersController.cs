@@ -1,4 +1,5 @@
 ﻿using MailKit.Net.Smtp;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using MimeKit;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using WarehouseAPI.CustomModels;
@@ -33,8 +35,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Users>>> GetUsers()
     {
-        
-        var users = await _context.Users.ToListAsync();
+        var users = await _context.Users.Where(u => !u.IsDeleted).ToListAsync();
         return Ok(users);
     }
 
@@ -178,24 +179,30 @@ public class UsersController : ControllerBase
             return BadRequest(new { error = "Invalid password." });
         }
 
-        return Ok(new { message = "Login successful." });
+        // Return user info on successful login
+        return Ok(new {
+            message = "Login successful.",
+            user = new {
+                user.UserID,
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.ImagePath
+            }
+        });
     }
 
     [HttpDelete("{Email}")]
     public async Task<IActionResult> DeleteProduct(string Email)
     {
-        var User = await _context.Users
-        .FirstOrDefaultAsync(u => u.Email == Email);
-
+        var User = await _context.Users.FirstOrDefaultAsync(u => u.Email == Email && !u.IsDeleted);
         if (User == null)
         {
             return NotFound(new { error = "User not found." });
         }
-
-        _context.Users.Remove(User);
+        User.IsDeleted = true;
         await _context.SaveChangesAsync();
-
-        return Ok(new { message = "User deleted successfully." });
+        return Ok(new { message = "User deleted successfully (soft delete)." });
     }
 
     [HttpPost("ForgotPassword")]
@@ -328,6 +335,32 @@ public class UsersController : ControllerBase
         }
         await _context.SaveChangesAsync();
         return Ok(new { message = $"Verification links sent to {sentCount} unverified users." });
+    }
+
+    [HttpPost("{id}/upload-image")]
+    public async Task<IActionResult> UploadUserImage(int id, IFormFile image)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null || user.IsDeleted)
+        {
+            return NotFound(new { error = "User not found." });
+        }
+        if (image == null || image.Length == 0)
+        {
+            return BadRequest(new { error = "No image file provided." });
+        }
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+        var fileName = $"user_{id}_{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+        var filePath = Path.Combine(uploadsFolder, fileName);
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await image.CopyToAsync(stream);
+        }
+        user.ImagePath = $"images/{fileName}";
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Image uploaded successfully.", imagePath = user.ImagePath });
     }
 }
 

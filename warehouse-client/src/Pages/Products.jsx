@@ -11,8 +11,13 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
   const [price, setPrice] = useState('');
   const [companyID, setCompanyID] = useState('');
   const [categoryID, setCategoryID] = useState('');
+  const [imageFile, setImageFile] = useState(null); // <-- Add image file state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,12 +35,24 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
           categoryID: Number(categoryID),
           quantity: Number(quantity),
           price: Number(price),
+          isDeleted: false,
         }),
       });
       if (!res.ok) {
         setError('Failed to add product.');
       } else {
-        setPName(''); setDescription(''); setQuantity(''); setPrice(''); setCompanyID(''); setCategoryID('');
+        const data = await res.json();
+        // Upload image if selected
+        if (imageFile && data.productId) {
+          const formData = new FormData();
+          formData.append('image', imageFile);
+          await fetch(`https://localhost:7020/api/Products/${data.productId}/upload-image`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+          });
+        }
+        setPName(''); setDescription(''); setQuantity(''); setPrice(''); setCompanyID(''); setCategoryID(''); setImageFile(null);
         onAdd();
         onClose();
       }
@@ -67,6 +84,8 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
           </label>
           <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" onWheel={e => e.target.blur()} /></label>
           <label>Price<input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="0.01" onWheel={e => e.target.blur()} /></label>
+          <label>Image<input type="file" accept="image/*" onChange={handleFileChange} /></label>
+          {imageFile && <div>Selected file: {imageFile.name}</div>}
           {error && <div className="form-error">{error}</div>}
           <div className="modal-actions">
             <button type="button" onClick={onClose} disabled={loading}>Cancel</button>
@@ -87,6 +106,7 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
   const [price, setPrice] = useState(product?.price || '');
   const [companyID, setCompanyID] = useState(product?.companyID || '');
   const [categoryID, setCategoryID] = useState(product?.categoryID || '');
+  const [imageFile, setImageFile] = useState(null); // <-- Add image file state
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -97,6 +117,7 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
     setPrice(product?.price || '');
     setCompanyID(product?.companyID || '');
     setCategoryID(product?.categoryID || '');
+    setImageFile(null); // Reset image file on open/product change
   }, [product, open]);
 
   if (!open) return null;
@@ -114,6 +135,10 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
       </div>
     );
   }
+
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -136,6 +161,16 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
       if (!res.ok) {
         setError('Failed to update product.');
       } else {
+        // Upload image if selected
+        if (imageFile) {
+          const formData = new FormData();
+          formData.append('image', imageFile);
+          await fetch(`https://localhost:7020/api/Products/${product.productId}/upload-image`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+          });
+        }
         onEdit();
         onClose();
       }
@@ -166,6 +201,19 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
           </label>
           <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" onWheel={e => e.target.blur()} /></label>
           <label>Price<input type="number" value={price} onChange={e => setPrice(e.target.value)} required min="0" step="0.01" onWheel={e => e.target.blur()} /></label>
+          {/* Show current image if available */}
+          {product.imagePath && !imageFile && (
+            <div style={{ marginBottom: 8 }}>
+              <div>Current Image:</div>
+              <img
+                src={`https://localhost:7020/${product.imagePath}`}
+                alt={product.pName}
+                style={{ width: '100%', maxHeight: 150, objectFit: 'contain', marginBottom: 8 }}
+              />
+            </div>
+          )}
+          <label>Change Image<input type="file" accept="image/*" onChange={handleFileChange} /></label>
+          {imageFile && <div>Selected file: {imageFile.name}</div>}
           {error && <div className="form-error">{error}</div>}
           <div className="modal-actions">
             <button type="button" onClick={onClose} disabled={loading}>Cancel</button>
@@ -221,11 +269,13 @@ export default function Products() {
     // eslint-disable-next-line
   }, []);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.pName?.toLowerCase().includes(search.toLowerCase()) ||
-      product.description?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredProducts = products
+    .filter(product => !product.isDeleted)
+    .filter(
+      (product) =>
+        product.pName?.toLowerCase().includes(search.toLowerCase()) ||
+        product.description?.toLowerCase().includes(search.toLowerCase())
+    );
 
   // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE) || 1;
@@ -242,9 +292,11 @@ export default function Products() {
   const handleDelete = async (product) => {
     if (!window.confirm(`Are you sure you want to delete '${product.pName}'?`)) return;
     try {
-      await fetch(`https://localhost:7020/api/Products/${product.productId}`, {
-        method: 'DELETE',
+      await fetch(`https://localhost:7020/api/Products/${product.productId}/isdeleted`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
+        body: JSON.stringify({ isDeleted: true }),
       });
       fetchProducts();
     } catch {
@@ -282,6 +334,15 @@ export default function Products() {
               paginatedProducts.map((product) => (
                 <div className="product-card" key={product.productId}>
                   <div className="product-card-content">
+                    {/* Display product image if available */}
+                    {product.imagePath && (
+                      <img
+                        src={`https://localhost:7020/${product.imagePath}`}
+                        alt={product.pName}
+                        className="product-image"
+                        style={{ width: '100%', maxHeight: 150, objectFit: 'contain', marginBottom: 8 }}
+                      />
+                    )}
                     <div className="product-card-title-row">
                       <span className="product-card-name">{product.pName}</span>
                     </div>

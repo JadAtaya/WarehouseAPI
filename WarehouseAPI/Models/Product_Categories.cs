@@ -14,5 +14,6 @@ namespace WarehouseAPI.Models
         public int CategoryID { get; set; }
         public string Prod_CategoryName { get; set; }
         public DateTime Created_at { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

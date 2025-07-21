@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WarehouseAPI.Data;
 using WarehouseAPI.Models;
+using WarehouseAPI.CustomModels;
 using WarehouseAPI.Data;
 using WarehouseAPI.Models;
 
@@ -34,7 +35,8 @@ public class Product_CategoriesController : ControllerBase
         var category = new Product_Categories
         {
             Prod_CategoryName = categoryModel.Prod_CategoryName,
-            Created_at = DateTime.UtcNow
+            Created_at = DateTime.UtcNow,
+            IsDeleted = categoryModel.IsDeleted
         };
         _context.Product_Categories.Add(category);
         await _context.SaveChangesAsync();
@@ -45,7 +47,7 @@ public class Product_CategoriesController : ControllerBase
     public async Task<IActionResult> PutProductCategory(int id, Product_Categories_POSTPUT updatedCategoryModel)
     {
         var category = await _context.Product_Categories.FindAsync(id);
-        if (category == null)
+        if (category == null || category.IsDeleted)
         {
             return NotFound(new { error = "Category not found." });
         }
@@ -54,6 +56,7 @@ public class Product_CategoriesController : ControllerBase
             return BadRequest(new { error = "Category name is required." });
         }
         category.Prod_CategoryName = updatedCategoryModel.Prod_CategoryName;
+        category.IsDeleted = updatedCategoryModel.IsDeleted;
         await _context.SaveChangesAsync();
         return Ok(new { message = "Category updated successfully." });
     }
@@ -68,6 +71,19 @@ public class Product_CategoriesController : ControllerBase
         }
         _context.Product_Categories.Remove(category);
         await _context.SaveChangesAsync();
-        return Ok(new { message = "Category deleted successfully." });
+        return Ok(new { message = "Category deleted permanently." });
+    }
+
+    [HttpPut("{id}/isdeleted")]
+    public async Task<IActionResult> UpdateCategoryIsDeleted(int id, [FromBody] CategoryIsDeletedUpdate update)
+    {
+        var category = await _context.Product_Categories.FindAsync(id);
+        if (category == null)
+        {
+            return NotFound(new { error = "Category not found." });
+        }
+        category.IsDeleted = update.IsDeleted;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = $"Category IsDeleted updated to {update.IsDeleted}." });
     }
 }

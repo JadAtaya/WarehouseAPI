@@ -12,6 +12,6 @@ namespace WarehouseAPI.Models
         [Key]
         
         public string Prod_CategoryName { get; set; } = string.Empty;
-       
+        public bool IsDeleted { get; set; } = false;
     }
 }

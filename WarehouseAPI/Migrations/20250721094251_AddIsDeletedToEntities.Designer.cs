@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WarehouseAPI.Data;
 
@@ -11,9 +12,11 @@ using WarehouseAPI.Data;
 namespace WarehouseAPI.Migrations
 {
     [DbContext(typeof(WarehouseContext))]
-    partial class WarehouseContextModelSnapshot : ModelSnapshot
+    [Migration("20250721094251_AddIsDeletedToEntities")]
+    partial class AddIsDeletedToEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,9 +133,6 @@ namespace WarehouseAPI.Migrations
                     b.Property<string>("Company_Name")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Company_Name");
 
                     b.ToTable("Companies_POSTPUT");
@@ -157,9 +157,6 @@ namespace WarehouseAPI.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
@@ -208,9 +205,6 @@ namespace WarehouseAPI.Migrations
                     b.Property<string>("Prod_CategoryName")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.HasKey("Prod_CategoryName");
 
                     b.ToTable("Product_CategoriesPOSTPUT");
@@ -256,9 +250,6 @@ namespace WarehouseAPI.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaSignInAlt, FaUserPlus, FaKey } from 'react-icons/fa';
@@ -11,6 +11,12 @@ export default function Login() {
   const [message, setMessage] = useState('');
   const [resending, setResending] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem('userEmail')) {
+      navigate('/home', { replace: true });
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,11 +71,20 @@ export default function Login() {
         } else {
           localStorage.setItem('userEmail', email);
         }
+        // Store userID in localStorage for pfp editing
+        console.log('Login API response:', data);
+        if (data.user && typeof data.user.userID !== 'undefined') {
+          console.log('Setting userID:', data.user.userID);
+          localStorage.setItem('userID', String(data.user.userID));
+        } else {
+          console.log('userID not found in response');
+        }
         setTimeout(() => {
+          console.log('Navigating to /home and reloading');
           navigate('/home');
+          setTimeout(() => { window.location.reload(); }, 100); // Ensure reload after navigation
         }, 1000);
       } else {
-        // After failed login, check if the account is unverified
         fetch('https://localhost:7020/api/Users/CheckEmailVerified', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

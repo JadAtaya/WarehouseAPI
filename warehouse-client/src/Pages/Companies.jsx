@@ -16,7 +16,7 @@ function AddCompanyModal({ open, onClose, onAdd }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ company_Name: name }),
+        body: JSON.stringify({ company_Name: name, isDeleted: false }),
       });
       if (!res.ok) {
         setError('Failed to add company.');
@@ -146,16 +146,18 @@ export default function Companies() {
   }, []);
 
   const filteredCompanies = companies.filter(
-    (company) =>
+    (company) => !company.isDeleted &&
       company.company_Name?.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleDelete = async (company) => {
     if (!window.confirm(`Are you sure you want to delete '${company.company_Name}'?`)) return;
     try {
-      await fetch(`https://localhost:7020/api/Companies/${company.companyID}`, {
-        method: 'DELETE',
+      await fetch(`https://localhost:7020/api/Companies/${company.companyID}/isdeleted`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
+        body: JSON.stringify({ isDeleted: true }),
       });
       fetchCompanies();
     } catch {

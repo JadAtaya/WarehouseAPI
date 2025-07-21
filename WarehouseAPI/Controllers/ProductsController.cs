@@ -5,6 +5,8 @@ using WarehouseAPI.CustomModels;
 using WarehouseAPI.Data;
 using WarehouseAPI.Data;
 using WarehouseAPI.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace WarehouseApi.Controllers;
 
@@ -29,8 +31,7 @@ public class ProductsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProductById(int id)
     {
-        var product = await _context.Products
-            .FirstOrDefaultAsync(p => p.ProductId == id);
+        var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == id);
 
         if (product == null)
         {
@@ -56,7 +57,8 @@ public class ProductsController : ControllerBase
             CategoryID = newproduct.CategoryID,
             Quantity = newproduct.Quantity,
             Price = newproduct.Price,
-            Created_at = DateTime.UtcNow // Ensure correct creation time
+            Created_at = DateTime.UtcNow,
+            IsDeleted = false // Always false on creation
         };
 
         _context.Products.Add(product);
@@ -65,29 +67,12 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetProductById), new { id = product.ProductId }, product);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProduct(int id)
-    {
-        var product = await _context.Products
-        .FirstOrDefaultAsync(p => p.ProductId == id);
-
-        if (product == null)
-        {
-            return NotFound(new { error = "Product not found." });
-        }
-
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-
-        return Ok(new { message = "Product deleted successfully." });
-    }
-
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProduct(int id, ProductUpdate updatedProduct)
     {
         var existingProduct = await _context.Products.FindAsync(id);
 
-        if (existingProduct == null)
+        if (existingProduct == null || existingProduct.IsDeleted)
         {
             return NotFound(new { error = "Product not found." });
         }
@@ -98,6 +83,7 @@ public class ProductsController : ControllerBase
         existingProduct.Quantity = updatedProduct.Quantity;
         existingProduct.CompanyID = updatedProduct.CompanyID;
         existingProduct.CategoryID = updatedProduct.CategoryID;
+        existingProduct.IsDeleted = updatedProduct.IsDeleted;
 
         await _context.SaveChangesAsync();
 
@@ -110,6 +96,7 @@ public class ProductsController : ControllerBase
         var query = from p in _context.Products
                     join c in _context.Companies on p.CompanyID equals c.CompanyID
                     join pc in _context.Product_Categories on p.CategoryID equals pc.CategoryID
+                    where !p.IsDeleted
                     select new ProductJOINS
                     {
                         ProductId = p.ProductId,
@@ -128,7 +115,7 @@ public class ProductsController : ControllerBase
         var query = from p in _context.Products
                     join c in _context.Companies on p.CompanyID equals c.CompanyID
                     join pc in _context.Product_Categories on p.CategoryID equals pc.CategoryID
-                    where p.PName.Contains(pname)
+                    where p.PName.Contains(pname) && !p.IsDeleted
                     select new ProductJOINS
                     {
                         ProductId = p.ProductId,
@@ -148,4 +135,56 @@ public class ProductsController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("{id}/isdeleted")]
+    public async Task<IActionResult> UpdateProductIsDeleted(int id, [FromBody] ProductIsDeletedUpdate update)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return NotFound(new { error = "Product not found." });
+        }
+        // Only update IsDeleted, do not remove from DB
+        product.IsDeleted = update.IsDeleted;
+        await _context.SaveChangesAsync();
+        return Ok(new { message = $"Product IsDeleted updated to {update.IsDeleted}." });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+        {
+            return NotFound(new { error = "Product not found." });
+        }
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Product deleted permanently." });
+    }
+
+    [HttpPost("{id}/upload-image")]
+    public async Task<IActionResult> UploadProductImage(int id, IFormFile image)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null || product.IsDeleted)
+        {
+            return NotFound(new { error = "Product not found." });
+        }
+        if (image == null || image.Length == 0)
+        {
+            return BadRequest(new { error = "No image file provided." });
+        }
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images");
+        if (!Directory.Exists(uploadsFolder))
+            Directory.CreateDirectory(uploadsFolder);
+        var fileName = $"product_{id}_{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+        var filePath = Path.Combine(uploadsFolder, fileName);
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await image.CopyToAsync(stream);
+        }
+        product.ImagePath = $"images/{fileName}";
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Image uploaded successfully.", imagePath = product.ImagePath });
+    }
 }

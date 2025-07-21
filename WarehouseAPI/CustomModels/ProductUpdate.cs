@@ -14,6 +14,6 @@ namespace WarehouseAPI.CustomModels
         public int CategoryID { get; set; }
         public int Quantity { get; set; }
         public double Price { get; set; }
-       
+        public bool IsDeleted { get; set; } = false;
     }
 }

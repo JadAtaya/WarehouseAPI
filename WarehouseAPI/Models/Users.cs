@@ -19,5 +19,7 @@ namespace WarehouseAPI.Models
         public DateTime Created_at { get; set; }
         public bool IsVerified { get; set; } = false;
         public string? VerificationToken { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public string? ImagePath { get; set; } // Path to user image
     }
 }

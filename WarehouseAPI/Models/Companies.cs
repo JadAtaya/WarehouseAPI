@@ -10,5 +10,6 @@ namespace WarehouseAPI.Models
         public int CompanyID { get; set; }
         public string Company_Name { get; set; }
         public DateTime Created_at { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

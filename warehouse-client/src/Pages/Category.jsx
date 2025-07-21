@@ -16,7 +16,7 @@ function AddCategoryModal({ open, onClose, onAdd }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ prod_CategoryName: name }),
+        body: JSON.stringify({ prod_CategoryName: name, isDeleted: false }),
       });
       if (!res.ok) {
         setError('Failed to add category.');
@@ -146,16 +146,18 @@ export default function Category() {
   }, []);
 
   const filteredCategories = categories.filter(
-    (cat) =>
+    cat => !cat.isDeleted &&
       cat.prod_CategoryName?.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleDelete = async (category) => {
     if (!window.confirm(`Are you sure you want to delete '${category.prod_CategoryName}'?`)) return;
     try {
-      await fetch(`https://localhost:7020/api/Product_Categories/${category.categoryID}`, {
-        method: 'DELETE',
+      await fetch(`https://localhost:7020/api/Product_Categories/${category.categoryID}/isdeleted`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
+        body: JSON.stringify({ isDeleted: true }),
       });
       fetchCategories();
     } catch {

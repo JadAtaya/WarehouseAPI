@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Register.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
@@ -13,6 +13,12 @@ export default function Register() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem('userEmail')) {
+      navigate('/home', { replace: true });
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
