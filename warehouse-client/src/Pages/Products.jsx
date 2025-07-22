@@ -73,13 +73,13 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
           <label>Company
             <select value={companyID} onChange={e => setCompanyID(e.target.value)} required>
               <option value="" disabled>Select company</option>
-              {companies.map(c => <option key={c.companyID} value={c.companyID}>{c.company_Name}</option>)}
+              {companies.filter(c => !c.isDeleted).map(c => <option key={c.companyID} value={c.companyID}>{c.company_Name}</option>)}
             </select>
           </label>
           <label>Category
             <select value={categoryID} onChange={e => setCategoryID(e.target.value)} required>
               <option value="" disabled>Select category</option>
-              {categories.map(cat => <option key={cat.categoryID} value={cat.categoryID}>{cat.prod_CategoryName}</option>)}
+              {categories.filter(cat => !cat.isDeleted).map(cat => <option key={cat.categoryID} value={cat.categoryID}>{cat.prod_CategoryName}</option>)}
             </select>
           </label>
           <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" onWheel={e => e.target.blur()} /></label>
@@ -190,13 +190,13 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
           <label>Company
             <select value={companyID} onChange={e => setCompanyID(e.target.value)} required>
               <option value="" disabled>Select company</option>
-              {companies.map(c => <option key={c.companyID} value={c.companyID}>{c.company_Name}</option>)}
+              {companies.filter(c => !c.isDeleted).map(c => <option key={c.companyID} value={c.companyID}>{c.company_Name}</option>)}
             </select>
           </label>
           <label>Category
             <select value={categoryID} onChange={e => setCategoryID(e.target.value)} required>
               <option value="" disabled>Select category</option>
-              {categories.map(cat => <option key={cat.categoryID} value={cat.categoryID}>{cat.prod_CategoryName}</option>)}
+              {categories.filter(cat => !cat.isDeleted).map(cat => <option key={cat.categoryID} value={cat.categoryID}>{cat.prod_CategoryName}</option>)}
             </select>
           </label>
           <label>Quantity<input type="number" value={quantity} onChange={e => setQuantity(e.target.value)} required min="0" onWheel={e => e.target.blur()} /></label>

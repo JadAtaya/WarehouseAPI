@@ -47,6 +47,21 @@ export default function MainLayout() {
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to log out?')) {
+      // Add Login_History API call for logout
+      const userID = localStorage.getItem('userID');
+      const userEmail = localStorage.getItem('userEmail');
+      if (userID && userEmail) {
+        fetch('https://localhost:7020/api/Login_History', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userID: Number(userID),
+            username: userEmail,
+            loggedin_at: new Date().toISOString(),
+            isActive: false
+          }),
+        }).catch(() => {});
+      }
       localStorage.removeItem('userEmail');
       navigate('/login');
     }

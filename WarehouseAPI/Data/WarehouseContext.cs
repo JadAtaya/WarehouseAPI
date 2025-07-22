@@ -18,6 +18,7 @@ namespace WarehouseAPI.Data
         public DbSet<SubCompanies> SubCompanies => Set<SubCompanies>();
         public DbSet<ProductJOINS> ProductJOINS => Set<ProductJOINS>();
         public DbSet<ProductPost> ProductPost => Set<ProductPost>();
+        public DbSet<Login_History> Login_History => Set<Login_History>();
     }
 
 

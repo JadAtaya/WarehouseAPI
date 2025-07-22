@@ -14,6 +14,7 @@ using WarehouseAPI.CustomModels;
 using WarehouseAPI.Data;
 using WarehouseAPI.Data;
 using WarehouseAPI.Models;
+using WarehouseAPI.Services; // Add this
 
 namespace WarehouseApi.Controllers;
 
@@ -24,12 +25,14 @@ public class UsersController : ControllerBase
     private readonly WarehouseContext _context;
     private readonly EmailSettings _emailSettings;
     private readonly IConfiguration _configuration;
+    private readonly JwtService _jwtService;
 
     public UsersController(WarehouseContext context, IOptions<EmailSettings> emailSettings, IConfiguration configuration)
     {
         _context = context;
         _emailSettings = emailSettings.Value;
         _configuration = configuration;
+        _jwtService = new JwtService(configuration); // Initialize JwtService
     }
 
     [HttpGet]
@@ -179,9 +182,11 @@ public class UsersController : ControllerBase
             return BadRequest(new { error = "Invalid password." });
         }
 
-        // Return user info on successful login
+        // Generate JWT token on successful login
+        var token = _jwtService.GenerateToken(user);
         return Ok(new {
             message = "Login successful.",
+            token,
             user = new {
                 user.UserID,
                 user.FirstName,

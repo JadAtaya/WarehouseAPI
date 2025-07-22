@@ -1,7 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaSignInAlt, FaUserPlus, FaKey } from 'react-icons/fa';
+
+// Helper for authenticated fetch requests
+export function authFetch(url, options = {}) {
+  const token = localStorage.getItem('jwtToken');
+  const headers = {
+    ...options.headers,
+    'Authorization': token ? `Bearer ${token}` : undefined,
+    'Content-Type': 'application/json',
+  };
+  return fetch(url, { ...options, headers });
+}
+
+// Helper to decode JWT and get expiry
+function getTokenExpiry(token) {
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp ? payload.exp * 1000 : null; // exp is in seconds, JS uses ms
+  } catch {
+    return null;
+  }
+}
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -71,11 +93,59 @@ export default function Login() {
         } else {
           localStorage.setItem('userEmail', email);
         }
+        // Store JWT token if present
+        if (data.token) {
+          localStorage.setItem('jwtToken', data.token);
+        }
         // Store userID in localStorage for pfp editing
         console.log('Login API response:', data);
         if (data.user && typeof data.user.userID !== 'undefined') {
           console.log('Setting userID:', data.user.userID);
           localStorage.setItem('userID', String(data.user.userID));
+          const userID = data.user.userID;
+          const username = data.email || email;
+          // 1. Check for existing active session
+          try {
+            const historyRes = await fetch('https://localhost:7020/api/Login_History');
+            if (historyRes.ok) {
+              const history = await historyRes.json();
+              const activeSession = Array.isArray(history)
+                ? history.find(h => h.userID === userID && h.isActive)
+                : null;
+              if (activeSession) {
+                // 2. Close the previous session
+                await fetch('https://localhost:7020/api/Login_History', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    userID,
+                    username,
+                    loggedin_at: new Date().toISOString(),
+                    isActive: false
+                  }),
+                });
+              }
+            }
+          } catch (e) {
+            // Optionally handle error
+            console.error('Failed to check/close previous login session', e);
+          }
+          // 3. Create the new active session
+          try {
+            await fetch('https://localhost:7020/api/Login_History', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userID,
+                username,
+                loggedin_at: new Date().toISOString(),
+                isActive: true
+              }),
+            });
+          } catch (e) {
+            // Optionally handle error (fire-and-forget)
+            console.error('Failed to log login history', e);
+          }
         } else {
           console.log('userID not found in response');
         }
