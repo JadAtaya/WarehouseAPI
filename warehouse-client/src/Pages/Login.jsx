@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, /* useRef */ } from 'react';
 import './Login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash, FaSignInAlt, FaUserPlus, FaKey } from 'react-icons/fa';
@@ -15,6 +15,7 @@ export function authFetch(url, options = {}) {
 }
 
 // Helper to decode JWT and get expiry
+/*
 function getTokenExpiry(token) {
   if (!token) return null;
   try {
@@ -24,6 +25,7 @@ function getTokenExpiry(token) {
     return null;
   }
 }
+*/
 
 export default function Login() {
   const [email, setEmail] = useState('');
