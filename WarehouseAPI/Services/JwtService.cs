@@ -34,7 +34,7 @@ namespace WarehouseAPI.Services
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(1), 
+                expires: DateTime.UtcNow.AddHours(2), 
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
