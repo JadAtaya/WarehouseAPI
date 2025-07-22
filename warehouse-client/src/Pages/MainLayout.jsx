@@ -97,7 +97,7 @@ export default function MainLayout() {
           <button onClick={() => navigate('/users')} className={location.pathname.startsWith('/users') ? 'active' : ''}><FaUsers /> Users</button>
         </div>
         <div className="sidebar-logo-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '8rem 0'}}>
-          <img src="/warehouselogo.png" alt="Warehouse Logo" style={{ width: '200px', height: '200px', margin: '0 auto', marginLeft: '-8px' }} />
+          <img src={process.env.PUBLIC_URL + "/warehouselogo.png"} alt="Warehouse Logo" style={{ width: '200px', height: '200px', margin: '0 auto', marginLeft: '-8px' }} />
         </div>
         <div className="sidebar-bottom">
           <button className="return-home-button" onClick={() => navigate('/home')}>

@@ -49,7 +49,7 @@ export default function Forgot_password() {
   return (
     <div className="forgot-bg-container">
       <div className="login-card enhanced">
-        <img src="/warehouselogo.png" alt="Warehouse Logo" className="login-logo" />
+        <img src={process.env.PUBLIC_URL + "/warehouselogo.png"} alt="Warehouse Logo" className="login-logo" />
         <h2 className="login-title">Forgot Password?</h2>
         <p className="login-tagline">Enter your email and we'll send you a new password.</p>
         <form onSubmit={handleSubmit}>

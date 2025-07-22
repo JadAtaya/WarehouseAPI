@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <div className="home-floating-cards-container">
       <div className="home-welcome-card enhanced">
-        <img src="/warehouselogo.png" alt="Warehouse Logo" className="home-logo" />
+        <img src={process.env.PUBLIC_URL + "/warehouselogo.png"} alt="Warehouse Logo" className="home-logo" />
         <h1>Welcome to the Warehouse!</h1>
         <p>Your one-stop solution for inventory management.</p>
         <a href="/products" className="home-cta-btn">

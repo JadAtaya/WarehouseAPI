@@ -229,7 +229,7 @@ export default function Login() {
       </div>
       <div className="login-container">
         <div className="login-card enhanced">
-          <img src="/warehouselogo.png" alt="Warehouse Logo" className="login-logo" />
+          <img src={process.env.PUBLIC_URL + "/warehouselogo.png"} alt="Warehouse Logo" className="login-logo" />
           <h2 className="login-title">Welcome Back!</h2>
           <p className="login-tagline">Sign in to manage your warehouse with ease.</p>
           <form onSubmit={handleSubmit}>

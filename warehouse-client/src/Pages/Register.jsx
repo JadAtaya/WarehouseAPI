@@ -72,7 +72,7 @@ export default function Register() {
       </div>
       <div className="login-container">
         <div className="login-card enhanced">
-          <img src="/warehouselogo.png" alt="Warehouse Logo" className="login-logo" />
+          <img src={process.env.PUBLIC_URL + "/warehouselogo.png"} alt="Warehouse Logo" className="login-logo" />
           <h2 className="login-title">Create Your Account</h2>
           <p className="login-tagline">Register to start managing your warehouse.</p>
           <form onSubmit={handleSubmit}>
