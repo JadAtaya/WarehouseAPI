@@ -8,7 +8,7 @@ import Companies from './Pages/Companies.jsx';
 import Users from './Pages/Users.jsx';
 import MainLayout from './Pages/MainLayout.jsx';
 import ForgotPassword from './Pages/Forgot_password.jsx';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect, useRef } from 'react';
 
 function isAuthenticated() {
