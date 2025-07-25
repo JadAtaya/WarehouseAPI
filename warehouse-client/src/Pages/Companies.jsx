@@ -12,7 +12,7 @@ function AddCompanyModal({ open, onClose, onAdd }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('https://localhost:7020/api/Companies', {
+      const res = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -78,7 +78,7 @@ function EditCompanyModal({ open, onClose, onEdit, company }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`https://localhost:7020/api/Companies/${company.companyID}`, {
+      const res = await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Companies/${company.companyID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -124,7 +124,7 @@ export default function Companies() {
 
   const fetchCompanies = () => {
     setLoading(true);
-    fetch('https://localhost:7020/api/Companies', { credentials: 'include' })
+    fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Companies', { credentials: 'include' })
       .then(async (res) => {
         if (!res.ok) {
           setError('Failed to fetch companies.');
@@ -153,7 +153,7 @@ export default function Companies() {
   const handleDelete = async (company) => {
     if (!window.confirm(`Are you sure you want to delete '${company.company_Name}'?`)) return;
     try {
-      await fetch(`https://localhost:7020/api/Companies/${company.companyID}/isdeleted`, {
+      await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Companies/${company.companyID}/isdeleted`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

@@ -24,7 +24,7 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('https://localhost:7020/api/Products', {
+      const res = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -46,7 +46,7 @@ function AddProductModal({ open, onClose, onAdd, companies, categories }) {
         if (imageFile && data.productId) {
           const formData = new FormData();
           formData.append('image', imageFile);
-          await fetch(`https://localhost:7020/api/Products/${data.productId}/upload-image`, {
+          await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Products/${data.productId}/upload-image`, {
             method: 'POST',
             body: formData,
             credentials: 'include',
@@ -145,7 +145,7 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`https://localhost:7020/api/Products/${product.productId}`, {
+      const res = await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Products/${product.productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -165,7 +165,7 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
         if (imageFile) {
           const formData = new FormData();
           formData.append('image', imageFile);
-          await fetch(`https://localhost:7020/api/Products/${product.productId}/upload-image`, {
+          await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Products/${product.productId}/upload-image`, {
             method: 'POST',
             body: formData,
             credentials: 'include',
@@ -206,7 +206,7 @@ function EditProductModal({ open, onClose, onEdit, product, companies, categorie
             <div style={{ marginBottom: 8 }}>
               <div>Current Image:</div>
               <img
-                src={`https://localhost:7020/${product.imagePath}`}
+                src={`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/${product.imagePath}`}
                 alt={product.pName}
                 style={{ width: '100%', maxHeight: 150, objectFit: 'contain', marginBottom: 8 }}
               />
@@ -239,7 +239,7 @@ export default function Products() {
 
   const fetchProducts = () => {
     setLoading(true);
-    fetch('https://localhost:7020/api/Products', { credentials: 'include' })
+    fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Products', { credentials: 'include' })
       .then(async (res) => {
         if (!res.ok) {
           setError('Failed to fetch products.');
@@ -258,11 +258,11 @@ export default function Products() {
 
   useEffect(() => {
     fetchProducts();
-    fetch('https://localhost:7020/api/Companies', { credentials: 'include' })
+    fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Companies', { credentials: 'include' })
       .then(async (res) => {
         if (res.ok) setCompanies(await res.json());
       });
-    fetch('https://localhost:7020/api/Product_Categories', { credentials: 'include' })
+    fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Product_Categories', { credentials: 'include' })
       .then(async (res) => {
         if (res.ok) setCategories(await res.json());
       });
@@ -292,7 +292,7 @@ export default function Products() {
   const handleDelete = async (product) => {
     if (!window.confirm(`Are you sure you want to delete '${product.pName}'?`)) return;
     try {
-      await fetch(`https://localhost:7020/api/Products/${product.productId}/isdeleted`, {
+      await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Products/${product.productId}/isdeleted`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -337,7 +337,7 @@ export default function Products() {
                     {/* Display product image if available */}
                     {product.imagePath && (
                       <img
-                        src={`https://localhost:7020/${product.imagePath}`}
+                        src={`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/${product.imagePath}`}
                         alt={product.pName}
                         className="product-image"
                         style={{ width: '100%', maxHeight: 150, objectFit: 'contain', marginBottom: 8 }}

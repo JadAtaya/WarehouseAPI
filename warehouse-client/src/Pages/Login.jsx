@@ -48,7 +48,7 @@ export default function Login() {
     setMessage('');
 
     try {
-      const response = await fetch('https://localhost:7020/api/Users/Login', {
+      const response = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/Login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -69,7 +69,7 @@ export default function Login() {
           setMessage('');
           setResending(true);
           // Send verification email
-          fetch('https://localhost:7020/api/Users/SendVerificationLink', {
+          fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/SendVerificationLink', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -108,7 +108,7 @@ export default function Login() {
           const username = data.email || email;
           // 1. Check for existing active session
           try {
-            const historyRes = await fetch('https://localhost:7020/api/Login_History');
+            const historyRes = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Login_History');
             if (historyRes.ok) {
               const history = await historyRes.json();
               const activeSession = Array.isArray(history)
@@ -116,7 +116,7 @@ export default function Login() {
                 : null;
               if (activeSession) {
                 // 2. Close the previous session
-                await fetch('https://localhost:7020/api/Login_History', {
+                await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Login_History', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
@@ -134,7 +134,7 @@ export default function Login() {
           }
           // 3. Create the new active session
           try {
-            await fetch('https://localhost:7020/api/Login_History', {
+            await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Login_History', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -157,7 +157,7 @@ export default function Login() {
           setTimeout(() => { window.location.reload(); }, 100); // Ensure reload after navigation
         }, 1000);
       } else {
-        fetch('https://localhost:7020/api/Users/CheckEmailVerified', {
+        fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/CheckEmailVerified', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email }),
@@ -176,7 +176,7 @@ export default function Login() {
               setMessage('');
               setResending(true);
               // Send verification email
-              fetch('https://localhost:7020/api/Users/SendVerificationLink', {
+              fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/SendVerificationLink', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),

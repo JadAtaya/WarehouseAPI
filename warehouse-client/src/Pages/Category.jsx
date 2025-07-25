@@ -12,7 +12,7 @@ function AddCategoryModal({ open, onClose, onAdd }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch('https://localhost:7020/api/Product_Categories', {
+      const res = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Product_Categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -78,7 +78,7 @@ function EditCategoryModal({ open, onClose, onEdit, category }) {
     setError('');
     setLoading(true);
     try {
-      const res = await fetch(`https://localhost:7020/api/Product_Categories/${category.categoryID}`, {
+      const res = await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Product_Categories/${category.categoryID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -124,7 +124,7 @@ export default function Category() {
 
   const fetchCategories = () => {
     setLoading(true);
-    fetch('https://localhost:7020/api/Product_Categories', { credentials: 'include' })
+    fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Product_Categories', { credentials: 'include' })
       .then(async (res) => {
         if (!res.ok) {
           setError('Failed to fetch categories.');
@@ -153,7 +153,7 @@ export default function Category() {
   const handleDelete = async (category) => {
     if (!window.confirm(`Are you sure you want to delete '${category.prod_CategoryName}'?`)) return;
     try {
-      await fetch(`https://localhost:7020/api/Product_Categories/${category.categoryID}/isdeleted`, {
+      await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Product_Categories/${category.categoryID}/isdeleted`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

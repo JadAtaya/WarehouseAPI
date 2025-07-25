@@ -28,7 +28,7 @@ export default function Register() {
     setMessage('');
 
     try {
-      const response = await fetch('https://localhost:7020/api/Users/Register', {
+      const response = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/Register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, firstName, lastName }),

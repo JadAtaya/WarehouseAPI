@@ -26,7 +26,7 @@ export default function Users() {
 
   const fetchUsers = () => {
     setLoading(true);
-    fetch('https://localhost:7020/api/Users', { credentials: 'include' })
+    fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users', { credentials: 'include' })
       .then(async (res) => {
         if (!res.ok) {
           setError('Failed to fetch users.');
@@ -78,7 +78,7 @@ export default function Users() {
     try {
       const formData = new FormData();
       formData.append('image', pfpFile);
-      const res = await fetch(`https://localhost:7020/api/Users/${userID}/upload-image`, {
+      const res = await fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/${userID}/upload-image`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -147,7 +147,7 @@ export default function Users() {
                       />
                     ) : isCurrentUser && user.imagePath ? (
                       <img
-                        src={`https://localhost:7020/${user.imagePath}`}
+                        src={`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/${user.imagePath}`}
                         alt={user.firstName + ' ' + user.lastName}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
                       />

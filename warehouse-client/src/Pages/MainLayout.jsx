@@ -17,7 +17,7 @@ export default function MainLayout() {
       setError('User email not found. Please log in again.');
       return;
     }
-    fetch(`https://localhost:7020/api/Users/GetSingleUser/${encodeURIComponent(userEmail)}`, {
+    fetch(`https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/GetSingleUser/${encodeURIComponent(userEmail)}`, {
       credentials: 'include',
     })
       .then(async (res) => {
@@ -51,7 +51,7 @@ export default function MainLayout() {
       const userID = localStorage.getItem('userID');
       const userEmail = localStorage.getItem('userEmail');
       if (userID && userEmail) {
-        fetch('https://localhost:7020/api/Login_History', {
+        fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Login_History', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

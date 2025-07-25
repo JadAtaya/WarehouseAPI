@@ -23,7 +23,7 @@ export default function Forgot_password() {
     setError('');
     setLoading(true);
     try {
-      const response = await fetch('https://localhost:7020/api/Users/ForgotPassword', {
+      const response = await fetch('https://the-warehouselb-dcemdma9gzgxd6bw.westeurope-01.azurewebsites.net/api/Users/ForgotPassword', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
